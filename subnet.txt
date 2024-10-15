@@ -1,0 +1,57 @@
+def subnet_calculator():
+    print("Subnet Calculator")
+    print("------------------")
+
+    # Get user input
+    ip_address = input("Enter IP address (e.g., 192.168.1.1): ")
+    subnet_mask = input("Enter subnet mask (e.g., 255.255.255.0): ")
+
+    # Validate IP address
+    ip_address_octets = ip_address.split('.')
+    if len(ip_address_octets) != 4:
+        print("Error: Invalid IP address. It should have 4 octets.")
+        return
+    for octet in ip_address_octets:
+        if int(octet) > 255:
+            print("Error: Invalid IP address. Each octet should be between 0 and 255.")
+            return
+
+    # Validate subnet mask
+    subnet_mask_octets = subnet_mask.split('.')
+    if len(subnet_mask_octets) != 4:
+        print("Error: Invalid subnet mask. It should have 4 octets.")
+        return
+    for octet in subnet_mask_octets:
+        if int(octet) > 255:
+            print("Error: Invalid subnet mask. Each octet should be between 0 and 255.")
+            return
+
+    # Convert IP address and subnet mask to binary
+    ip_address_binary = ''.join(format(int(x), '08b') for x in ip_address_octets)
+    subnet_mask_binary = ''.join(format(int(x), '08b') for x in subnet_mask_octets)
+
+    # Calculate number of bits in subnet mask
+    subnet_mask_bits = subnet_mask_binary.count('1')
+
+    # Calculate number of hosts per subnet
+    hosts_per_subnet = 2 ** (32 - subnet_mask_bits)
+
+    # Calculate number of subnets
+    num_subnets = 2 ** subnet_mask_bits
+
+    # Calculate subnet address
+    subnet_address = '.'.join(str(int(ip_address_binary[i:i+8], 2)) for i in range(0, 32, 8))
+
+    # Calculate broadcast address
+    broadcast_address = '.'.join(str(int(ip_address_binary[i:i+8], 2) | (2 ** (8 - subnet_mask_bits % 8) - 1)) for i in range(0, 32, 8))
+
+    # Print results
+    print("Results:")
+    print(f"IP Address: {ip_address}")
+    print(f"Subnet Mask: {subnet_mask}")
+    print(f"Subnet Address: {subnet_address}")
+    print(f"Broadcast Address: {broadcast_address}")
+    print(f"Number of Subnets: {num_subnets}")
+    print(f"Number of Hosts per Subnet: {hosts_per_subnet}")
+
+subnet_calculator()
